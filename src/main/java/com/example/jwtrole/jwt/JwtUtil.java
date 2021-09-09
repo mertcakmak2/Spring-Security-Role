@@ -1,5 +1,6 @@
 package com.example.jwtrole.jwt;
 
+import com.example.jwtrole.model.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -40,13 +42,20 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(String username) {
+    public String generateToken(String username, List<UserRole> roles) {
         Map<String, Object> claims = new HashMap<>();
+
+        for ( UserRole role : roles ) {
+            claims.put("roles", roles);
+        };
         return createToken(claims, username);
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
-        String token = Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+        String token = Jwts.builder()
+                .setClaims(claims)
+                .setSubject(subject)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000))
                 .signWith(SignatureAlgorithm.HS256, secret).compact();
         return token;

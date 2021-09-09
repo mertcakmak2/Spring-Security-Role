@@ -45,6 +45,6 @@ public class AuthServiceImpl implements AuthService{
             throw new Exception("authentication failed "+e);
         }
 
-        return jwtUtil.generateToken(pgUser.getEmail());
+        return jwtUtil.generateToken(pgUser.getEmail(), pgUser.getRoles());
     }
 }
